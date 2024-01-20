@@ -1,12 +1,9 @@
-use std::{
-    fs::File,
-    path::{Path, PathBuf},
-};
+use std::{fs::File, path::PathBuf};
 
 use clap::Parser;
 use color_eyre::eyre::{Context, Result};
 use itertools::Itertools;
-use parquet::{arrow::arrow_reader::ParquetRecordBatchReaderBuilder, schema};
+use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 
 use crate::convert::to_sql_value;
 
@@ -75,14 +72,21 @@ fn main() -> Result<()> {
     while let Some(batch) = reader.next() {
         let batch = batch?;
 
-        for i in 0..batch.num_rows() {
-            let values = batch
-                .columns()
-                .iter()
-                .cloned()
-                .map(|array| to_sql_value(array, i))
-                .join(",");
-            println!("INSERT INTO `{table_name}` ({columns_names}) VALUES ({values});");
+        for values_chunk in (0..batch.num_rows())
+            .map(|i| {
+                batch
+                    .columns()
+                    .iter()
+                    .cloned()
+                    .map(|array| to_sql_value(array, i))
+                    .join(",")
+            })
+            .map(|values| format!("({values})"))
+            .chunks(100)
+            .into_iter()
+            .map(|mut values| values.join(","))
+        {
+            println!("INSERT INTO `{table_name}` ({columns_names}) VALUES {values_chunk};",);
         }
     }
 

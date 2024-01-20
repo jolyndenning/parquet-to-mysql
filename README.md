@@ -13,7 +13,7 @@ cargo install --git https://github.com/Scoopit/parquet-to-mysql.git
 
 ## Features / Limitations
 
-This tool is typically the opposite of [mysqldump-to-parquet](https://github.com/Scoopit/mysqldump-to-parquet).
+`parquet-to-mysql` is the opposite of [mysqldump-to-parquet](https://github.com/Scoopit/mysqldump-to-parquet).
 
 ## License
 
