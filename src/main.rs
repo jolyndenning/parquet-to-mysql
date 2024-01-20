@@ -1,7 +1,7 @@
 use std::{fs::File, path::PathBuf};
 
 use clap::Parser;
-use color_eyre::eyre::{Context, Result};
+use color_eyre::eyre::{bail, Context, Result};
 use itertools::Itertools;
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 
@@ -14,6 +14,10 @@ struct Opts {
     /// SQL Table name, if not present, filename without the extension will be used instead
     #[arg(short, long)]
     table_name: Option<String>,
+
+    /// Number of rows to group into a single INSERT INTO statement
+    #[arg(short = 'r', long, default_value = "100")]
+    rows_batch_size: usize,
 
     input_file: String,
 }
@@ -35,6 +39,10 @@ const FOOTER: &str = r#"/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 fn main() -> Result<()> {
     color_eyre::install()?;
     let opts = Opts::parse();
+
+    if opts.rows_batch_size == 0 {
+        bail!("rows-batch-size must be greater than 0");
+    }
 
     let input_path = PathBuf::from(&opts.input_file);
     let extension = input_path
@@ -82,7 +90,7 @@ fn main() -> Result<()> {
                     .join(",")
             })
             .map(|values| format!("({values})"))
-            .chunks(100)
+            .chunks(opts.rows_batch_size)
             .into_iter()
             .map(|mut values| values.join(","))
         {
