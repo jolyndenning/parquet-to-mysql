@@ -4,7 +4,7 @@ use arrow::array::*;
 use chrono::{DateTime, Utc};
 use format_sql_query::QuotedData;
 
-pub fn to_sql_value(column: ArrayRef, index: usize) -> Cow<'static, str> {
+pub(crate) fn to_sql_value(column: ArrayRef, index: usize) -> Cow<'static, str> {
     if column.is_null(index) {
         "NULL".into()
     } else {

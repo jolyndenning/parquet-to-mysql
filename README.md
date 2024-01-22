@@ -5,8 +5,6 @@ statements.
 
 ## Installation
 
-This tool is not yet published to crates.io.
-
 ````bash
 cargo install --git https://github.com/Scoopit/parquet-to-mysql.git
 ````
