@@ -1,10 +1,6 @@
-use std::{fs::File, path::PathBuf, sync::Arc};
-
 use arrow::{datatypes::SchemaRef, record_batch::RecordBatch};
 use clap::Parser;
-use color_eyre::eyre::{bail, Context, Result};
 use itertools::Itertools;
-use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 
 use crate::convert::to_sql_value;
 

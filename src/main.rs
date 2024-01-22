@@ -6,8 +6,6 @@ use itertools::Itertools;
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 use parquet_to_mysql::record_batch_to_sql_inserts;
 
-use crate::convert::to_sql_value;
-
 mod convert;
 
 #[derive(Parser)]
