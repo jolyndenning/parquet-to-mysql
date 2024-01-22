@@ -4,6 +4,7 @@ use clap::Parser;
 use color_eyre::eyre::{bail, Context, Result};
 use itertools::Itertools;
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
+use parquet_to_mysql::record_batch_to_sql_inserts;
 
 use crate::convert::to_sql_value;
 
@@ -80,22 +81,15 @@ fn main() -> Result<()> {
     while let Some(batch) = reader.next() {
         let batch = batch?;
 
-        for values_chunk in (0..batch.num_rows())
-            .map(|i| {
-                batch
-                    .columns()
-                    .iter()
-                    .cloned()
-                    .map(|array| to_sql_value(array, i))
-                    .join(",")
-            })
-            .map(|values| format!("({values})"))
-            .chunks(opts.rows_batch_size)
-            .into_iter()
-            .map(|mut values| values.join(","))
-        {
-            println!("INSERT INTO `{table_name}` ({columns_names}) VALUES {values_chunk};",);
-        }
+        println!(
+            "{}",
+            record_batch_to_sql_inserts(
+                batch,
+                &table_name,
+                Some(columns_names.as_str()),
+                opts.rows_batch_size
+            )
+        );
     }
 
     println!("{FOOTER}");
