@@ -6,7 +6,7 @@ statements.
 ## Installation
 
 ````bash
-cargo install --git https://github.com/Scoopit/parquet-to-mysql.git
+cargo install --git https://github.com/jolyndenning/parquet-to-mysql.git
 ````
 
 ## Features / Limitations
