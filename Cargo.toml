@@ -9,7 +9,7 @@ edition = "2021"
 clap = { version = "^4.4", features = ["derive"] }
 color-eyre = "0.6"
 parquet = "49"
-arrow = "49.0.0"
+arrow = "55.2.0"
 itertools = "0.12"
 chrono = "0.4"
 format-sql-query = "0.4.0"
