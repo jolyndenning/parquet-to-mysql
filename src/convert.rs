@@ -13,6 +13,7 @@ pub(crate) fn to_sql_value(column: ArrayRef, index: usize) -> Cow<'static, str> 
             arrow::datatypes::DataType::BinaryView => todo!(),
             arrow::datatypes::DataType::Utf8View => todo!(),
             arrow::datatypes::DataType::ListView(_) => todo!(),
+            arrow::datatypes::DataType::LargeListView(_) => todo!(),
             arrow::datatypes::DataType::Boolean => {
                 let array = column.as_any().downcast_ref::<BooleanArray>().unwrap();
                 if array.value(index) {
